@@ -1,202 +1,73 @@
 import streamlit as st
 
-# ============================================================
-# PAGE CONFIG
-# ============================================================
-st.set_page_config(page_title="ticket_booth.py", page_icon=">_", layout="centered")
+st.set_page_config(page_title="Terminal Escape Room", layout="centered")
 
-# ============================================================
-# TERMINAL CSS - pure console look
-# ============================================================
+# Custom CSS to simulate a retro terminal
 st.markdown("""
-<style>
-    .stApp {
-        background-color: #000000;
-        color: #00ff00;
-    }
-    html, body, [class*="css"], p, label, span, div {
-        font-family: 'Courier New', Courier, monospace !important;
-        color: #00ff00 !important;
-    }
-    h1, h2, h3, h4 {
-        color: #00ff00 !important;
-        font-family: 'Courier New', monospace !important;
-        font-weight: normal !important;
-    }
-    .stTextInput input, .stNumberInput input {
-        background-color: #000000 !important;
-        color: #00ff00 !important;
-        border: 1px solid #00ff00 !important;
-        border-radius: 0 !important;
-        font-family: 'Courier New', monospace !important;
-    }
-    .stSelectbox div[data-baseweb="select"] > div {
-        background-color: #000000 !important;
-        color: #00ff00 !important;
-        border: 1px solid #00ff00 !important;
-        border-radius: 0 !important;
-    }
-    .stCheckbox {
-        color: #00ff00 !important;
-    }
-    .stButton > button {
-        background-color: #000000;
-        color: #00ff00;
-        border: 1px solid #00ff00;
-        border-radius: 0;
-        font-family: 'Courier New', monospace;
-    }
-    .stButton > button:hover {
-        background-color: #00ff00;
-        color: #000000;
-    }
-    .stAlert {
-        background-color: #000000 !important;
-        border: 1px solid #00ff00 !important;
-        color: #00ff00 !important;
-        border-radius: 0 !important;
-        font-family: 'Courier New', monospace !important;
-    }
-    hr {
-        border-color: #00ff00 !important;
-        opacity: 0.4;
-    }
-    pre {
-        color: #00ff00;
-        font-family: 'Courier New', monospace;
-        white-space: pre-wrap;
-    }
-</style>
+    <style>
+    .stApp {background-color: #0c0c0c;}
+    h1, p, div, label {color: #00ff00 !important; font-family: 'Courier New', monospace !important;}
+    .stTextInput>div>div>input {background-color: #000000 !important; color: #00ff00 !important; border: 1px solid #00ff00 !important; font-family: 'Courier New', monospace;}
+    </style>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# HEADER
-# ============================================================
-st.markdown("""
-<pre>
-$ python ticket_booth.py
-> booting ticket-booth engine .......... OK
-> loading module: none required ....... OK
-> status: READY
-</pre>
-""", unsafe_allow_html=True)
+st.title("Terminal: The Haunted Castle")
 
-st.markdown("---")
-st.markdown("## MISSION: Cinema Ticket Booth")
-st.markdown("---")
+# Initialize game state
+if 'stage' not in st.session_state:
+    st.session_state.stage = 'start'
+    st.session_state.history = [
+        "Welcome to the Haunted Castle!",
+        "You are in a dark hallway. There are two doors in front of you: 'red' and 'blue'."
+    ]
 
-# ============================================================
-# TASK HINTS
-# ============================================================
-st.markdown("""
-<pre>
-[ YOUR TASK ]
-Build a ticket price calculator. Ask the user for:
-    1. their age
-    2. the day of the week
-    3. whether they are a student
+# Display terminal history
+for line in st.session_state.history:
+    st.write(f"> {line}")
 
-[ HINTS ]
-Step 1 -> Set a BASE PRICE from age using if / elif / else:
-        age < 5      -> $0   (Baby)
-        age <= 12    -> $5   (Child)
-        age <= 17    -> $8   (Teen)
-        age < 65     -> $12  (Adult)
-        else         -> $6   (Senior)
+# Logic to process the student's input
+def process_command():
+    cmd = st.session_state.cmd_input.lower().strip()
+    st.session_state.history.append(f"[{cmd}]")
+    
+    if st.session_state.stage == 'start':
+        if cmd == "red":
+            st.session_state.history.append("You enter the red room. A sleeping dragon blocks the exit!")
+            st.session_state.history.append("Do you try to 'sneak' past it or 'attack' it?")
+            st.session_state.stage = 'red_room'
+        elif cmd == "blue":
+            st.session_state.history.append("You enter the blue room. It is filled with treasure!")
+            st.session_state.history.append("Do you take the 'gold' or the glowing 'sword'?")
+            st.session_state.stage = 'blue_room'
+        else:
+            st.session_state.history.append("Invalid choice. The floor collapses. GAME OVER.")
+            st.session_state.stage = 'game_over'
+            
+    elif st.session_state.stage == 'red_room':
+        if cmd == "sneak":
+            st.session_state.history.append("You quietly tip-toe past the dragon and escape. YOU WIN!")
+        elif cmd == "attack":
+            st.session_state.history.append("Your attack wakes the dragon. It eats you. GAME OVER.")
+        else:
+            st.session_state.history.append("You hesitate. The dragon wakes up. GAME OVER.")
+        st.session_state.stage = 'game_over'
+            
+    elif st.session_state.stage == 'blue_room':
+        if cmd == "gold":
+            st.session_state.history.append("The gold is cursed! You turn into a golden statue. GAME OVER.")
+        elif cmd == "sword":
+            st.session_state.history.append("The sword is magical! It opens a secret passage to safety. YOU WIN!")
+        else:
+            st.session_state.history.append("You stare at the treasure too long. Ghosts get you. GAME OVER.")
+        st.session_state.stage = 'game_over'
+        
+    elif st.session_state.stage == 'game_over':
+        st.session_state.history.append("Type 'restart' to play again.")
+        if cmd == "restart":
+            st.session_state.stage = 'start'
+            st.session_state.history = ["Welcome back to the Haunted Castle!", "There are two doors: 'red' and 'blue'."]
 
-Step 2 -> Apply a DISCOUNT with another if / elif:
-        if day == "Tuesday"    -> 50% off
-        elif is_student        -> $2 off
-        else                   -> no discount
+    # Clear the input box
+    st.session_state.cmd_input = ""
 
-Step 3 -> Make sure the final price is never below 0.
-</pre>
-""", unsafe_allow_html=True)
-
-st.markdown("---")
-
-# ============================================================
-# INPUTS
-# ============================================================
-name = st.text_input("enter your name:", value="guest")
-age = st.number_input("enter your age:", min_value=0, max_value=120, value=15)
-day = st.selectbox(
-    "select day of the week:",
-    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-)
-is_student = st.checkbox("i am a student")
-
-# ============================================================
-# LOGIC - step 1: base price from age
-# ============================================================
-if age < 5:
-    base_price = 0
-    category = "Baby"
-elif age <= 12:
-    base_price = 5
-    category = "Child"
-elif age <= 17:
-    base_price = 8
-    category = "Teen"
-elif age < 65:
-    base_price = 12
-    category = "Adult"
-else:
-    base_price = 6
-    category = "Senior"
-
-# ============================================================
-# LOGIC - step 2: discount from day / student
-# ============================================================
-price = base_price
-if day == "Tuesday":
-    price = base_price * 0.5
-    discount = "TUESDAY SPECIAL - 50% OFF"
-elif is_student:
-    price = base_price - 2
-    discount = "STUDENT DISCOUNT - $2 OFF"
-else:
-    discount = "NONE"
-
-# ============================================================
-# LOGIC - step 3: no negative price
-# ============================================================
-if price < 0:
-    price = 0
-
-# ============================================================
-# OUTPUT
-# ============================================================
-st.markdown("---")
-st.markdown("### OUTPUT")
-st.markdown(f"""
-<pre>
-> name ........... {name}
-> age ............ {age}
-> day ............ {day}
-> student ........ {"yes" if is_student else "no"}
--------------------------------------
-> category ....... {category}
-> base price ..... ${base_price}
-> discount ....... {discount}
-> FINAL PRICE .... ${price:.2f}
--------------------------------------
-</pre>
-""", unsafe_allow_html=True)
-
-if price == 0:
-    st.markdown("<pre>>> ticket is FREE. enjoy the show.</pre>", unsafe_allow_html=True)
-else:
-    st.markdown(f"<pre>>> please pay ${price:.2f} at the counter.</pre>", unsafe_allow_html=True)
-
-# ============================================================
-# SIGNATURE
-# ============================================================
-st.markdown("---")
-st.markdown("""
-<pre>
-$ echo "Built by Tanvir Mahatab Nadim"
-Built by Tanvir Mahatab Nadim
-$
-</pre>
-""", unsafe_allow_html=True)
+st.text_input("Enter command:", key="cmd_input", on_change=process_command)
