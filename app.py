@@ -1,8 +1,8 @@
 import streamlit as st
 
-st.set_page_config(page_title="Terminal Escape Room", layout="centered")
+st.set_page_config(page_title="Terminal: Ticket Kiosk", layout="centered")
 
-# Custom CSS to simulate a retro terminal
+# Custom CSS for Terminal Look
 st.markdown("""
     <style>
     .stApp {background-color: #0c0c0c;}
@@ -11,63 +11,59 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Terminal: The Haunted Castle")
+st.title("Auto-Kiosk: Cinema Kiosk")
 
-# Initialize game state
 if 'stage' not in st.session_state:
     st.session_state.stage = 'start'
     st.session_state.history = [
-        "Welcome to the Haunted Castle!",
-        "You are in a dark hallway. There are two doors in front of you: 'red' and 'blue'."
+        "Welcome to the Retro Cinema Kiosk!",
+        "What genre do you want to watch? Type 'action' or 'comedy'."
     ]
 
-# Display terminal history
 for line in st.session_state.history:
     st.write(f"> {line}")
 
-# Logic to process the student's input
 def process_command():
     cmd = st.session_state.cmd_input.lower().strip()
     st.session_state.history.append(f"[{cmd}]")
     
     if st.session_state.stage == 'start':
-        if cmd == "red":
-            st.session_state.history.append("You enter the red room. A sleeping dragon blocks the exit!")
-            st.session_state.history.append("Do you try to 'sneak' past it or 'attack' it?")
-            st.session_state.stage = 'red_room'
-        elif cmd == "blue":
-            st.session_state.history.append("You enter the blue room. It is filled with treasure!")
-            st.session_state.history.append("Do you take the 'gold' or the glowing 'sword'?")
-            st.session_state.stage = 'blue_room'
+        if cmd == "action":
+            st.session_state.history.append("Action selected. 'Mad Max' is playing.")
+            st.session_state.history.append("Do you want '3d' ($15) or '2d' ($10)?")
+            st.session_state.stage = 'action_menu'
+        elif cmd == "comedy":
+            st.session_state.history.append("Comedy selected. 'Mr. Bean' is playing.")
+            st.session_state.history.append("Do you want the 'popcorn' combo ($12) or 'candy' combo ($9)?")
+            st.session_state.stage = 'comedy_menu'
         else:
-            st.session_state.history.append("Invalid choice. The floor collapses. GAME OVER.")
+            st.session_state.history.append("Invalid genre. Kiosk locked. GAME OVER.")
             st.session_state.stage = 'game_over'
             
-    elif st.session_state.stage == 'red_room':
-        if cmd == "sneak":
-            st.session_state.history.append("You quietly tip-toe past the dragon and escape. YOU WIN!")
-        elif cmd == "attack":
-            st.session_state.history.append("Your attack wakes the dragon. It eats you. GAME OVER.")
+    elif st.session_state.stage == 'action_menu':
+        if cmd == "3d":
+            st.session_state.history.append("Printing 3D Action Ticket... Total: $15. Enjoy!")
+        elif cmd == "2d":
+            st.session_state.history.append("Printing 2D Action Ticket... Total: $10. Enjoy!")
         else:
-            st.session_state.history.append("You hesitate. The dragon wakes up. GAME OVER.")
+            st.session_state.history.append("Invalid format. Transaction cancelled.")
         st.session_state.stage = 'game_over'
             
-    elif st.session_state.stage == 'blue_room':
-        if cmd == "gold":
-            st.session_state.history.append("The gold is cursed! You turn into a golden statue. GAME OVER.")
-        elif cmd == "sword":
-            st.session_state.history.append("The sword is magical! It opens a secret passage to safety. YOU WIN!")
+    elif st.session_state.stage == 'comedy_menu':
+        if cmd == "popcorn":
+            st.session_state.history.append("Printing Comedy Ticket + Popcorn receipt... Total: $12. Enjoy!")
+        elif cmd == "candy":
+            st.session_state.history.append("Printing Comedy Ticket + Candy receipt... Total: $9. Enjoy!")
         else:
-            st.session_state.history.append("You stare at the treasure too long. Ghosts get you. GAME OVER.")
+            st.session_state.history.append("Invalid snack. Transaction cancelled.")
         st.session_state.stage = 'game_over'
         
     elif st.session_state.stage == 'game_over':
-        st.session_state.history.append("Type 'restart' to play again.")
+        st.session_state.history.append("Type 'restart' to serve the next customer.")
         if cmd == "restart":
             st.session_state.stage = 'start'
-            st.session_state.history = ["Welcome back to the Haunted Castle!", "There are two doors: 'red' and 'blue'."]
+            st.session_state.history = ["Welcome to the Retro Cinema Kiosk!", "Type 'action' or 'comedy'."]
 
-    # Clear the input box
     st.session_state.cmd_input = ""
 
-st.text_input("Enter command:", key="cmd_input", on_change=process_command)
+st.text_input("Enter response:", key="cmd_input", on_change=process_command)
