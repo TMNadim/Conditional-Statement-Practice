@@ -66,3 +66,16 @@ def process_command():
     st.session_state.cmd_input = ""
 
 st.text_input("INPUT COMMAND:", key="cmd_input", on_change=process_command)
+
+
+
+# ... (all your existing code for tabs 1, 2, and 3 goes here) ...
+
+# --- Your Signature ---
+st.markdown("---")
+st.markdown(
+    "<p style='text-align: center; color: grey; font-size: 0.8em;'>"
+    "Built with ❤️ by <b>Tanvir Mahatab Nadim</b>"
+    "</p>",
+    unsafe_allow_html=True
+)
