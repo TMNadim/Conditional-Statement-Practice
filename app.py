@@ -34,6 +34,31 @@ div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
 }
 button[data-baseweb="tab"] p { font-weight:700; }
 
+/* dropdown (selectbox): the closed box */
+div[data-baseweb="select"] > div {
+    background:#010409 !important; border:1px solid #30363d !important; color:#e6edf3 !important;
+}
+div[data-baseweb="select"] span, div[data-baseweb="select"] div { color:#e6edf3 !important; }
+div[data-baseweb="select"] svg { fill:#e6edf3 !important; }
+
+/* dropdown (selectbox): the menu that opens */
+div[data-baseweb="popover"], div[data-baseweb="popover"] > div,
+ul[role="listbox"], div[data-baseweb="menu"] {
+    background:#161b22 !important; border-radius:8px;
+}
+li[role="option"] { background:#161b22 !important; }
+li[role="option"], li[role="option"] * { color:#e6edf3 !important; }
+li[role="option"]:hover, li[role="option"][aria-selected="true"] { background:#238636 !important; }
+li[role="option"]:hover *, li[role="option"][aria-selected="true"] * { color:#ffffff !important; }
+
+/* number box + and - buttons */
+div[data-testid="stNumberInput"] button { background:#21262d !important; color:#e6edf3 !important; }
+div[data-testid="stNumberInput"] button svg { fill:#e6edf3 !important; }
+
+/* buttons */
+.stButton > button { background:#21262d; color:#e6edf3; border:1px solid #30363d; }
+.stButton > button:hover { border-color:#238636; color:#7ee787; }
+
 .win     { border:1px solid #30363d; border-radius:8px; overflow:hidden; }
 .winbar  { background:#21262d; padding:6px 12px; color:#8b949e !important; font-size:13px; }
 .dot     { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
